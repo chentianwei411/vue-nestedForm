@@ -4,6 +4,14 @@
   <strong>Title:</strong>
   <%= @team.title %>
 </p>
+<hr>
+
+<h3>Players</h3>
+<% @team.players.each do |player| %>
+  <div>
+    <%= player.name %>
+  </div>
+<% end %>
 
 <%= link_to 'Edit', edit_team_path(@team) %> |
 <%= link_to 'Back', teams_path %>

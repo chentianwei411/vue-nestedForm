@@ -1,22 +1,29 @@
-<%= form_with(model: team, local: true) do |form| %>
-  <% if team.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(team.errors.count, "error") %> prohibited this team from being saved:</h2>
+<%= content_tag :div,
+  id: 'nestedform',
+  data: {
+      team: team.to_json(except: [:id, :created_at, :updated_at]),
+      players_attributes: team.players.to_json(except: [:team_id,:created_at, :updated_at]),
+  } do %>
 
-      <ul>
-      <% team.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+  <label>Team Name:</label>
+  <!-- 等价于：<input type='text' v-model='team.title'> -->
+  <input type='text' v-bind:value='team.title' v-on:input='team.title = $event.target.value' />
+
+  <h4>Players:</h4>
+  <div v-for='(player, index) in team.players_attributes'>
+    <div v-if='player._destroy == 1'>
+      <label>{{player.name}}将被移除：</label>
+      <input type="text" v-bind:value='player.name' v-on:input='player.name = $event.target.value' style="background-color: gray;"/>
+      <button v-on:click='undoRemovePlayer(index)'>恢复</button>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
+    <div v-else>
+      <label>Player Name</label>
+      <input type="text" v-bind:value='player.name' v-on:input='player.name = $event.target.value' />
+      <button v-on:click='removePlayer(index)'>Remove Player</button>
+    </div>
   </div>
 
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <button v-on:click='addPlayer'>Add Player</button>
+  <br>
+  <button v-on:click='saveTeam'>Save Team</button>
 <% end %>
