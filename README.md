@@ -1,15 +1,16 @@
-# Vue.js和Turbolinks一起使用是如何做到的（原理解析）
+# 实现嵌套关联结构team／player的创建更新及删除功能
 
+### model结构
+1. Team 和 Player 是1对多。
+2. 使用accepts_nested_attributes_for :players, allow_destroy: true，建立嵌套关联。
 
-原理：
-加上钩子beforeMount方法：
-beforeMount: function() {
-  this.$originalElement = this.$el.outerHTML
-  // 如果从一个页面导航到另一个页面，销毁原来的Vue实例
-  document.addEventListener('turbolinks:before-cache', destroyVue.bind(this))
-},
-destroyed: function() {
-  // 在view app实例销毁后，$el是空的，把之前的临时变量储存的html给它。
-  // 然后turbolinks就可以缓存它了。
-  this.$el.outerHTML = this.$originalElement
-}
+### 目标：
+1. 用Vue.js实现team及关联collection players的新建，更新。
+2. 实现关联player的删除功能。
+
+### 技术
+1. Turbolinks插件。
+2. vue-resourse插件。用于提交HTTP请求。
+
+### 提示点
+1. 用data-* 特性的值信息给vue实例中的data属性中的team。
